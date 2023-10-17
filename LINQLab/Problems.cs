@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using LINQLab.Models;
 using System.Collections.Generic;
 using System.Data;
+using System.Configuration;
 
 namespace LINQLab
 {
@@ -23,7 +24,7 @@ namespace LINQLab
             RDemoTwo();
             RProblemTwo();
             RProblemThree();
-            //RProblemFour();
+            RProblemFour();
             //RProblemFive();
 
             //// <><><><><><><><> R Actions (Read) with Foreign Keys <><><><><><><><><>
@@ -119,7 +120,7 @@ namespace LINQLab
         {
             // Write a LINQ query that gets each product whose name that CONTAINS an "s".
             var productsNameContainsS = _context.Products.Where(p => p.Name.Contains("s"));
-            Console.WriteLine("\nRProblemTwo: Products less than or equal to 100");
+            Console.WriteLine("\nRProblemThree: Products whose name contains an 's'");
             foreach (Product product in productsNameContainsS)
             {
                 Console.WriteLine($"\nName: {product.Name}");
@@ -143,7 +144,12 @@ namespace LINQLab
         {
             // Write a LINQ query that gets all the users who registered BEFORE 2016.
             // Then print each user's email and registration date to the console.
-
+            var usersBefore2016 = _context.Users.Where(p => p.RegistrationDate < new DateTime(2016, 1, 1));
+            Console.WriteLine("\nRProblemFour: User's email and registration date of users who registered before 2016.\n");
+            foreach(User users in usersBefore2016)
+            {
+                Console.WriteLine($"Email: {users.Email}\nRegistration Date: {users.RegistrationDate}");
+            }
         }
         /*
             Expected Result:
