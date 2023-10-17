@@ -30,7 +30,7 @@ namespace LINQLab
             //// <><><><><><><><> R Actions (Read) with Foreign Keys <><><><><><><><><>
             RDemoThree();
             RProblemSix();
-            //RProblemSeven();
+            RProblemSeven();
             //RProblemEight();
 
             //// <><><><><><><><> CUD (Create, Update, Delete) Actions <><><><><><><><><>
@@ -194,7 +194,7 @@ namespace LINQLab
         {
             // Write a LINQ query that retrieves all of the products in the shopping cart of the user who has the email "afton@gmail.com".
             // Then print the product's name, price, and quantity to the console.
-            var aftonShoppingCart = _context.ShoppingCartItems.Include(p => p.Product).Include(p => p.User).Where(p => p.User.Email == "afton@gmail.com");
+            var aftonShoppingCart = _context.ShoppingCartItems.Include(sc => sc.Product).Include(sc => sc.User).Where(sc => sc.User.Email == "afton@gmail.com");
             Console.WriteLine("\nRProblemSix: Afton Shopping Cart.");
             foreach (ShoppingCartItem products in aftonShoppingCart)
             {
@@ -226,8 +226,12 @@ namespace LINQLab
             // HINT: End of query will be: .Select(sc => sc.Product.Price).Sum();
             // Print the total of the shopping cart to the console.
             // Remember to break the problem down and take it one step at a time!
-
-
+            var odaShoppingTotal = _context.ShoppingCartItems.Include(sc => sc.Product).
+                Include(sc => sc.User).
+                Where(sc => sc.User.Email == "oda@gmail.com").
+                Select(sc => sc.Product.Price).Sum();
+            Console.WriteLine("\nRProblemSeven: Oda Shopping Total.");
+            Console.WriteLine($"\nTotal: ${odaShoppingTotal}");
         }
         /*
          Total: $715.34
