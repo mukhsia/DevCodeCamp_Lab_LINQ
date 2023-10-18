@@ -31,7 +31,7 @@ namespace LINQLab
             RDemoThree();
             RProblemSix();
             RProblemSeven();
-            //RProblemEight();
+            RProblemEight();
 
             //// <><><><><><><><> CUD (Create, Update, Delete) Actions <><><><><><><><><>
 
@@ -226,10 +226,12 @@ namespace LINQLab
             // HINT: End of query will be: .Select(sc => sc.Product.Price).Sum();
             // Print the total of the shopping cart to the console.
             // Remember to break the problem down and take it one step at a time!
-            var odaShoppingTotal = _context.ShoppingCartItems.Include(sc => sc.Product).
-                Include(sc => sc.User).
-                Where(sc => sc.User.Email == "oda@gmail.com").
-                Select(sc => sc.Product.Price).Sum();
+            var odaShoppingTotal = _context.ShoppingCartItems
+                .Include(sc => sc.Product)
+                .Include(sc => sc.User)
+                .Where(sc => sc.User.Email == "oda@gmail.com")
+                .Select(sc => sc.Product.Price)
+                .Sum();
             Console.WriteLine("\nRProblemSeven: Oda Shopping Total.");
             Console.WriteLine($"\nTotal: ${odaShoppingTotal}");
         }
@@ -241,7 +243,26 @@ namespace LINQLab
         {
             // Write a query that retrieves all of the products in the shopping cart of users who have the role of "Employee".
             // Then print the product's name, price, and quantity to the console along with the email of the user that has it in their cart.
+            var employeeShoppingCarts = _context.UserRoles
+                .Include(sc => sc.Role)
+                .Include(sc => sc.User)
+                .Where(sc => sc.Role.RoleName == "Employee")
+                .Include(sc => sc.User.ShoppingCartItems)
+                .ThenInclude(u => u.Product)
+                .ToList();
 
+            // Note: Took a while to figure out ThenInclude
+            Console.WriteLine("\nRProblemEight: Employee Shopping Carts.");
+
+            // Notes: Breakpoints help in figuring out the nested foreach
+            foreach(UserRole userCarts in employeeShoppingCarts)
+            {
+                Console.WriteLine($"\nUser's email: {userCarts.User.Email}\n-----------");
+                foreach(ShoppingCartItem shoppingCart in userCarts.User.ShoppingCartItems)
+                {
+                    Console.WriteLine($"\nProduct name: {shoppingCart.Product.Name}\nPrice: {shoppingCart.Product.Price}\nQuantity: {shoppingCart.Quantity}");
+                }
+            }
         }
         /*
             Expected Result
