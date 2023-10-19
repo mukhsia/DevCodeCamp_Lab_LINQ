@@ -378,6 +378,8 @@ namespace LINQLab
             // Change the role of the user we created to "Employee"
             // HINT: You need to delete the existing role relationship and then create a new Userrole object and add it to the Userroles table
             // See the DDemoOne below as an example of removing a role relationship
+
+            // Tentative direct update solution could work, but Delete and Create for junction table entries help reduce 
             var userrole = _context.UserRoles.Where(ur => ur.User.Email == "dan@gmail.com").SingleOrDefault();
             _context.UserRoles.Remove(userrole);
             _context.SaveChanges();
@@ -420,9 +422,10 @@ namespace LINQLab
         private void DProblemTwo()
         {
             // Delete the user with the email "oda@gmail.com" from the Users table using LINQ.
+            var user = _context.Users.Where(u => u.Email == "oda@gmail.com").SingleOrDefault();
+            _context.Users.Remove(user);
 
-
-
+            _context.SaveChanges();
         }
 
         // <><><><><><><><> BONUS PROBLEMS <><><><><><><><><>
