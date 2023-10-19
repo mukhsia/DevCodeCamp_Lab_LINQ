@@ -49,7 +49,10 @@ namespace LINQLab
             //// <><> D Actions (Delete) <><>
             //DDemoOne();
             //DProblemOne();
-            DProblemTwo();
+            //DProblemTwo();
+
+            //// <><> Bonus Problems <><>
+            BonusOne();
         }
 
         // <><><><><><><><> R Actions (Read) <><><><><><><><><>
@@ -437,7 +440,19 @@ namespace LINQLab
             // Print "Signed In!" to the console if they exists and the values match otherwise print "Invalid Email or Password.".
 
             Console.WriteLine("Enter Email: ");
+            string email = Console.ReadLine();
+            Console.WriteLine("Enter Password: ");
+            string password = Console.ReadLine();
 
+            var user = _context.Users.Where(u => u.Email == email && u.Password == password).SingleOrDefault();
+            if(user != null)
+            {
+                Console.WriteLine("Signed In!");
+            } 
+            else
+            {
+                Console.WriteLine("Invalid Email or Password.");
+            }
         }
 
         private void BonusTwo()
