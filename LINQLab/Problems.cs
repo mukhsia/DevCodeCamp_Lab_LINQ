@@ -19,25 +19,25 @@ namespace LINQLab
         public void RunLINQQueries()
         {
             //// <><><><><><><><> R Actions (Read) <><><><><><><><><>
-            RDemoOne();
-            RProblemOne();
-            RDemoTwo();
-            RProblemTwo();
-            RProblemThree();
-            RProblemFour();
-            RProblemFive();
+            //RDemoOne();
+            //RProblemOne();
+            //RDemoTwo();
+            //RProblemTwo();
+            //RProblemThree();
+            //RProblemFour();
+            //RProblemFive();
 
             //// <><><><><><><><> R Actions (Read) with Foreign Keys <><><><><><><><><>
-            RDemoThree();
-            RProblemSix();
-            RProblemSeven();
-            RProblemEight();
+            //RDemoThree();
+            //RProblemSix();
+            //RProblemSeven();
+            //RProblemEight();
 
             //// <><><><><><><><> CUD (Create, Update, Delete) Actions <><><><><><><><><>
 
             //// <><> C Actions (Create) <><>
-            //CDemoOne();
-            //CProblemOne();
+            CDemoOne();
+            CProblemOne();
             //CDemoTwo();
             //CProblemTwo();
 
@@ -310,8 +310,14 @@ namespace LINQLab
         private void CProblemOne()
         {
             // Create a new Product object and add that product to the Products table. Choose any name and product info you like.
-
-
+            Product newProduct = new Product()
+            {
+                Name = "Wooting Two HE",
+                Description = "Analog Mechanical Keyboard utilizing Hall Effect technology.",
+                Price = 200.0M
+            };
+            _context.Products.Add(newProduct);
+            _context.SaveChanges();
         }
 
         public void CDemoTwo()
