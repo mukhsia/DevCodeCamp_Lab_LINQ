@@ -244,18 +244,17 @@ namespace LINQLab
             // Write a query that retrieves all of the products in the shopping cart of users who have the role of "Employee".
             // Then print the product's name, price, and quantity to the console along with the email of the user that has it in their cart.
             var employeeShoppingCarts = _context.UserRoles
-                .Include(sc => sc.Role)
-                .Include(sc => sc.User)
-                .Where(sc => sc.Role.RoleName == "Employee")
-                .Include(sc => sc.User.ShoppingCartItems)
-                .ThenInclude(u => u.Product)
+                .Where(ur => ur.Role.RoleName == "Employee")
+                .Include(ur => ur.User)
+                .Include(u => u.User.ShoppingCartItems)
+                .ThenInclude(sc => sc.Product)
                 .ToList();
 
             // Note: Took a while to figure out ThenInclude
             Console.WriteLine("\nRProblemEight: Employee Shopping Carts.");
 
-            // Notes: Breakpoints help in figuring out the nested foreach
-            foreach(UserRole userCarts in employeeShoppingCarts)
+            // Note: Breakpoint helped in figuring out the structure of the list for the nested foreach loop
+            foreach (UserRole userCarts in employeeShoppingCarts)
             {
                 Console.WriteLine($"\nUser's email: {userCarts.User.Email}\n-----------");
                 foreach(ShoppingCartItem shoppingCart in userCarts.User.ShoppingCartItems)
