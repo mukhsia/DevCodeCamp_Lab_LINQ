@@ -52,7 +52,8 @@ namespace LINQLab
             //DProblemTwo();
 
             //// <><> Bonus Problems <><>
-            BonusOne();
+            //BonusOne();
+            BonusTwo();
         }
 
         // <><><><><><><><> R Actions (Read) <><><><><><><><><>
@@ -459,6 +460,26 @@ namespace LINQLab
         {
             // Write a query that finds the total of every users shopping cart products using LINQ.
             // Display the total of each users shopping cart as well as the total of the toals to the console.
+            var usersShoppingCart = _context.ShoppingCartItems
+                .Include(sc => sc.User)
+                .Include(sc => sc.Product)
+                .GroupBy(sc => sc.User.Email)
+                .Select( grp => new {
+                    grp.Key,
+                    cartTotal = grp.Sum(g => g.Product.Price)
+                })
+                .ToList();
+
+            Console.WriteLine("Shopping Carts: ");
+
+            decimal totalOfTotals = 0.0M;
+            foreach(var cart in usersShoppingCart)
+            {
+                Console.WriteLine($"\nName: {cart.Key}\nTotal: ${cart.cartTotal}");
+                totalOfTotals += cart.cartTotal;
+            }
+
+            Console.WriteLine($"\n\nTotal of all carts: {totalOfTotals}");
         }
 
         // BIG ONE
