@@ -5,6 +5,8 @@ using LINQLab.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
+using Org.BouncyCastle.Asn1;
+using Microsoft.Extensions.Options;
 
 namespace LINQLab
 {
@@ -494,6 +496,147 @@ namespace LINQLab
             // 3. If the user does not successfully sign in
             // -Display "Invalid Email or Password"
             // -Re-prompt the user for credentials
+            bool isAuthenticated = false;
+            User user = new User();
+            int choice;
+
+            while (!isAuthenticated)
+            {
+                Console.WriteLine("Enter Email: ");
+                string email = Console.ReadLine();
+                Console.WriteLine("Enter Password: ");
+                string password = Console.ReadLine();
+
+                user = _context.Users.Where(u => u.Email == email && u.Password == password).SingleOrDefault();
+                if (user != null)
+                {
+                    isAuthenticated = true;
+                    Console.WriteLine("\nSigned In!\n");
+                }
+                else
+                {
+                    Console.WriteLine("\nInvalid Email or Password.\n");
+                }
+            }
+
+
+            do
+            {
+                Console.WriteLine("1. View Shopping Cart.\n" +
+                    "2. View available products.\n" +
+                    "3. Add a product to the Shopping Cart.\n" +
+                    "4. Remove a Product from the shopping Cart." +
+                    "5. Exit.");
+                Console.Write("Select an option (1-4):");
+                choice = Convert.ToInt32(Console.ReadLine());
+
+                switch (choice)
+                {
+                    case 1: // View products in the shopping cart
+                        ViewShoppingCart(user);
+                        break;
+
+                    case 2: // View all products
+                        ViewAllProducts();
+                        break;
+                        
+                    case 3: // Add a product to shopping cart (or increment quantity)
+                        AddProductToShoppingCart(user);
+                        break;
+                        
+                    case 4: // Remove a product from shopping cart
+                        RemoveProductFromShoppingCart(user);
+                        break;
+                        
+                    case 5:
+                        Console.WriteLine("Exiting program.");
+                        break;
+                        
+                    default:
+                        Console.WriteLine("Please enter a valid choice between 1 to 5.");
+                        break;
+
+
+                }
+            } while (choice != 5);
+        }
+
+        // Helper functions for Bonus 3
+        private void ViewShoppingCart(User user)
+        {
+            var aftonShoppingCart = _context.ShoppingCartItems.Include(sc => sc.Product).Include(sc => sc.User).Where(sc => sc.User.Email == user.Email);
+            Console.WriteLine($"\n{user.Email}'s Shopping Cart:\n");
+            foreach (ShoppingCartItem products in aftonShoppingCart)
+            {
+                Console.WriteLine($"Name: {products.Product.Name}\nPrice: {products.Product.Price}\nQuantity: {products.Quantity}\n");
+            }
+        }
+
+        private void ViewAllProducts()
+        {
+            var allProducts = _context.Products.ToList();
+            Console.WriteLine("\nAvailable Products:\n");
+            foreach (Product product in allProducts)
+            {
+                Console.WriteLine($"{product.Name} - ${product.Price}");
+            }
+        }
+
+        private void AddProductToShoppingCart(User user)
+        {
+            var productNames = _context.Products.Select(p => p.Name).ToList();
+            Console.WriteLine("\nProducts:\n");
+            int productOption = 0;
+            foreach (string productName in productNames)
+            {
+                Console.WriteLine($"{productOption + 1}. {productName}");
+            }
+            Console.Write("Select a product: ");
+            productOption = Convert.ToInt32(Console.ReadLine());
+            if (productOption < 1 && productOption > productNames.Count())
+            {
+                Console.WriteLine("Invalid choice entered.\n");
+            }
+            else
+            {
+                // Check for if product in shopping cart.
+                var productInShoppingCart = _context.ShoppingCartItems
+                    .Where(sc => sc.User.Email == user.Email)
+                    .Include(sc => sc.Product)
+                    .Where(sc => sc.Product.Name == productNames[productOption-1])
+                    .SingleOrDefault();
+
+                // It exists, increment the quantity
+                if(productInShoppingCart != null)
+                {
+                    ++productInShoppingCart.Quantity;
+                    _context.Update(productInShoppingCart);
+                    _context.SaveChanges();
+                    Console.WriteLine($"Product quantity incremented. {productInShoppingCart.Product.Name} in shopping cart: {productInShoppingCart.Quantity}");
+                }
+                else // Product not in shopping cart, add it.
+                {
+                    ShoppingCartItem productItem = new ShoppingCartItem()
+                    {
+                        ProductId = productOption - 1,
+                        UserId = user.Id,
+                        Quantity = 1
+                    };
+                    _context.Add(productItem);
+                    _context.SaveChanges();
+                    Console.WriteLine($"Added {productNames[productOption-1]} product to shopping cart.");
+                }
+            }
+        }
+
+        private void RemoveProductFromShoppingCart(User user)
+        {
+            // Print shopping cart.
+
+            // if quantity is 1, remove it from the shopping cart.
+
+            // If quantity is more than 1, decrement it from the .
+
 
         }
 
